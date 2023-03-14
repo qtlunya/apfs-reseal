@@ -2,6 +2,18 @@
 
 trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
 
+echo "[!] DO NOT RUN THIS SCRIPT UNLESS YOU HAVE BEEN INSTRUCTED TO"
+echo "[!] ONLY USE THIS SCRIPT IF YOU RECOVERY LOOPED ON IOS 15+ AND YOU DON'T WANT TO UPDATE"
+echo "[!] YOUR DEVICE WILL NOT BE ABLE TO BOOT WITHOUT A COMPUTER AFTER RUNNING THIS SCRIPT UNTIL YOU UPDATE TO LATEST IOS"
+echo
+echo "Please type \"Yes, I am sure\" to continue."
+echo
+read -r -p '> ' answer
+if [ "$answer" != "Yes, I am sure" ]; then
+    echo "[-] Cancelled."
+    exit 1
+fi
+
 for bin in aa awk ideviceenterrecovery irecovery jq palera1n plutil pyimg4 pzb scp ssh sshpass; do
     if ! [ -x "$(command -v "$bin")" ]; then
         echo "[!] $bin not found. Please install it and try again." >&2
