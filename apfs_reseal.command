@@ -2,7 +2,7 @@
 
 trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
 
-for bin in aa awk idevicenterrecovery irecovery jq palera1n plutil pyimg4 pzb scp ssh sshpass; do
+for bin in aa awk ideviceenterrecovery irecovery jq palera1n plutil pyimg4 pzb scp ssh sshpass; do
     if ! [ -x "$(command -v "$bin")" ]; then
         echo "[!] $bin not found. Please install it and try again." >&2
         exit 1
