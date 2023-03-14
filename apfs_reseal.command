@@ -161,9 +161,11 @@ remote_cmd "/usr/sbin/nvram auto-boot=false"
 remote_cmd "/sbin/reboot"
 case $version in
     15.*)
-        echo 'Done! Your device will now reboot to recovery mode, and you should be able to boot tethered using palera1n.'
+        echo '[*] Done! Your device will now reboot to recovery mode, and you should be able to boot tethered using palera1n.'
         ;;
     16.*)
-        echo 'Done! Force reboot your device, then it will reboot to recovery mode, and you should be able to boot tethered using palera1n.'
+        echo '[*] Done! Force reboot your device, then it will reboot to recovery mode, and you should be able to boot tethered using palera1n.'
         ;;
 esac
+echo '[*] Press any key to exit'
+read -r -s -n 1
