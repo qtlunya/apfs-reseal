@@ -4,7 +4,8 @@ trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileD
 
 echo "[!] DO NOT RUN THIS SCRIPT UNLESS YOU HAVE BEEN INSTRUCTED TO"
 echo "[!] ONLY USE THIS SCRIPT IF YOU RECOVERY LOOPED ON IOS 15+ AND YOU DON'T WANT TO UPDATE"
-echo "[!] YOUR DEVICE WILL NOT BE ABLE TO BOOT WITHOUT A COMPUTER AFTER RUNNING THIS SCRIPT UNTIL YOU UPDATE TO LATEST IOS"
+echo "[!] YOUR DEVICE WILL NOT BE ABLE TO BOOT WITHOUT A COMPUTER UNTIL YOU UPDATE/RESTORE"
+echo "[!] Untethered boot may be possible in the future, but no guarantees."
 echo
 echo "Please type \"Yes, I am sure\" to continue."
 echo
