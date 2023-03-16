@@ -40,9 +40,9 @@ remote_cp() {
     fi
 
     if scp -O /dev/null /dev/zero 2>/dev/null; then
-        sshpass -p alpine scp -v -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -O "$1" root@:"$2"
+        sshpass -p alpine scp -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -O "$1" root@:"$2"
     else
-        sshpass -p alpine scp -v -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$1" root@:"$2"
+        sshpass -p alpine scp -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$1" root@:"$2"
     fi
 }
 
