@@ -46,7 +46,7 @@ remote_cp() {
     fi
 }
 
-echo '[*] Waiting for device in recovery mode'
+echo '[*] Waiting for device in recovery or DFU mode'
 while true; do
     devices=$(system_profiler SPUSBDataType)
     case $devices in
@@ -64,6 +64,9 @@ while true; do
             ideviceenterrecovery "$(idevice_id -l)"
             ;;
         *'Product ID: 0x1281'*)  # recovery
+            break
+            ;;
+        *'Product ID: 0x1227'*)  # DFU
             break
             ;;
     esac
