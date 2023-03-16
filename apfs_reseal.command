@@ -73,6 +73,10 @@ while true; do
     sleep 1
 done
 
+while ! irecovery -q >/dev/null 2>/dev/null; do
+    sleep 0.1
+done
+
 device=$(irecovery -q | awk -F": " '$1 == "PRODUCT" { print $2 }')
 boardconfig=$(irecovery -q | awk -F": " '$1 == "MODEL" { print $2 }')
 
