@@ -32,7 +32,7 @@ done
 
 version=$1
 if [ -z "$version" ]; then
-    read -r -p "Enter iOS version (including beta/RC): " version
+    read -r -p "Enter your EXACT iOS version (including beta/RC): " version
 fi
 
 killall -STOP AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater
