@@ -115,9 +115,9 @@ fi
 if ! [ -e "$rootfs_dmg".mtree ]; then
     pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".mtree
 fi
-#if ! [ -e "$rootfs_dmg".root_hash ]; then
-#    pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".root_hash
-#fi
+if ! [ -e "$rootfs_dmg".root_hash ]; then
+    pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".root_hash
+fi
 if ! [ -e "$rootfs_dmg".trustcache ]; then
     pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".trustcache
 fi
@@ -154,14 +154,14 @@ remote_cmd "/usr/sbin/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp digest.db /mnt9/digest.db
 remote_cp mtree.txt /mnt9/mtree.txt
+remote_cp "$rootfs_dmg".root_hash /mnt9/root_hash
 remote_cmd "/usr/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
-remote_cmd "cp /mnt6/$active/usr/standalone/firmware/root_hash.img4 /mnt9/root_hash"
 remote_cmd "/usr/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/mtree.txt -r"
 remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/sbin/umount /mnt6"
-remote_cmd "/usr/sbin/apfs_sealvolume -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/digest.db -p -s com.apple.os.update-$active $rootfs"
+remote_cmd "/usr/sbin/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/digest.db -p -s com.apple.os.update-$active $rootfs"
 remote_cmd "/usr/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/sbin/umount /mnt9"
 remote_cmd "/bin/sync"
