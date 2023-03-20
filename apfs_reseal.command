@@ -1,5 +1,10 @@
 #!/bin/sh -e
 
+if [ "$1" = debug ]; then
+    debug=1
+    shift
+fi
+
 remote_cmd() {
     echo "[*] Running command: $1" >&2
     sshpass -p alpine ssh -q -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@ "$1"
@@ -90,8 +95,13 @@ while true; do
             pushd sshrd-script
             git fetch
             git reset --hard origin/main
-            ./sshrd.sh "$ramdisk_ver"
-            ./sshrd.sh boot
+            if [ "$debug" -eq 1 ]; then
+                bash -x ./sshrd.sh "$ramdisk_ver"
+                bash -x ./sshrd.sh boot
+            else
+                ./sshrd.sh "$ramdisk_ver"
+                ./sshrd.sh boot
+            fi
             popd
 
             break
