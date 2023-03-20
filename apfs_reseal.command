@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-if [ "$1" = debug ]; then
+if [ "$1" = --debug ]; then
     debug=1
     shift
 fi
