@@ -156,23 +156,23 @@ case $version in
 esac
 rootfs=${container}s1
 remote_cmd "/sbin/apfs_deletefs $rootfs"
-remote_cmd "/usr/sbin/newfs_apfs -o role=s -A -v System /dev/disk1"
-remote_cmd "/usr/sbin/mount_apfs $rootfs /mnt1"
+remote_cmd "/sbin/newfs_apfs -o role=s -A -v System /dev/disk1"
+remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
 remote_cmd "/sbin/umount /mnt1"
-remote_cmd "/usr/sbin/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
+remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp digest.db /mnt9/digest.db
 remote_cp mtree.txt /mnt9/mtree.txt
 remote_cp "$rootfs_dmg".root_hash /mnt9/root_hash
-remote_cmd "/usr/sbin/mount_apfs ${container}s6 /mnt6"
+remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
-remote_cmd "/usr/sbin/mount_apfs $rootfs /mnt1"
+remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/mtree.txt -r"
 remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/sbin/umount /mnt6"
-remote_cmd "/usr/sbin/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/digest.db -p -s com.apple.os.update-$active $rootfs"
-remote_cmd "/usr/sbin/mount_apfs $rootfs /mnt1"
+remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/digest.db -p -s com.apple.os.update-$active $rootfs"
+remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/sbin/umount /mnt9"
 remote_cmd "/bin/sync"
 remote_cmd "/usr/sbin/nvram auto-boot=true"
