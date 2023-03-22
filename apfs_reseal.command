@@ -38,7 +38,8 @@ done
 
 version=$1
 if [ -z "$version" ]; then
-    read -r -p "Enter your EXACT iOS version (including beta/RC): " version
+    printf 'Enter your EXACT iOS version (including beta/RC): ' >&2
+    read -r version
 fi
 
 killall -STOP AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater
@@ -62,7 +63,7 @@ while true; do
     case $devices in
         *SSHRD_Script*)  # ramdisk
             device=$(remote_cmd "/usr/bin/mgask ProductType | tail -1")
-            boardconfig=$(remote_cmd "/usr/bin/mgask HWModelStr | tail -1" | tr A-Z a-z)
+            boardconfig=$(remote_cmd "/usr/bin/mgask HWModelStr | tail -1" | tr '[:upper:]' '[:lower:]')
 
             echo "Detected $device ($boardconfig)"
 
@@ -93,7 +94,7 @@ while true; do
             if ! [ -e sshrd-script ]; then
                 git clone https://github.com/0xallie/sshrd-script
             fi
-            pushd sshrd-script
+            cd sshrd-script
             git fetch
             git reset --hard origin/main
             git submodule update --init --force
@@ -106,7 +107,7 @@ while true; do
                 ./sshrd.sh "$ramdisk_ver"
                 ./sshrd.sh boot
             fi
-            popd
+            cd "$OLDPWD"
 
             break
             ;;
@@ -121,7 +122,7 @@ rootfs_dmg=$(curl -s "${ipsw_url%/*}"/BuildManifest.plist | sed 's,<data>,<strin
 TMPDIR=${TMPDIR:-/var/tmp}
 
 mkdir -p "$TMPDIR"/apfs_reseal
-pushd "$TMPDIR"/apfs_reseal
+cd "$TMPDIR"/apfs_reseal
 
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
     pzb "$ipsw_url" -g "$rootfs_dmg"
@@ -193,5 +194,5 @@ case $version in
         echo '[*] Done! Please force reboot your device, then it should boot up in normal mode.'
         ;;
 esac
-echo '[*] Press any key to exit'
-read -r -s -n 1
+echo '[*] Press Enter to exit'
+read -r
