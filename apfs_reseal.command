@@ -7,7 +7,7 @@ if [ "$1" = --debug ]; then
 fi
 
 if [ "$1" = --clean ]; then
-    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db sshrd-script
+    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
     echo '[*] Cleaned temporary files'
     exit
 fi
