@@ -146,7 +146,7 @@ if ! [ -e manifest_and_db ]; then
 fi
 
 if ! [ -e apfs_invert_asr_img ]; then
-    asr -source "$rootfs_dmg" -target apfs_invert_asr_img --embed -erase -noprompt --chunkchecksum --puppetstrings
+    asr -source "$rootfs_dmg" -target apfs_invert_asr_img --embed -erase -noprompt --chunkchecksum
 fi
 rm -f "$rootfs_dmg"
 
