@@ -95,7 +95,7 @@ while true; do
             pushd sshrd-script
             git fetch
             git reset --hard origin/main
-            if [ "$debug" -eq 1 ]; then
+            if [ "$debug" = 1 ]; then
                 bash -x ./sshrd.sh "$ramdisk_ver"
                 bash -x ./sshrd.sh boot
             else
