@@ -149,9 +149,9 @@ rootfs=${container}s1
 if [ "$1" = --clean ]; then
     rm -rf -- *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
     if remote_cmd "test -e $rootfs"; then
-        remote_cmd "umount /mnt1" || true
-        remote_cmd "mount_apfs $rootfs /mnt1"
-        remote_cmd "rm -f /mnt1/apfs_invert_asr_img"
+        remote_cmd "/sbin/umount /mnt1" || true
+        remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
+        remote_cmd "/bin/rm -f /mnt1/apfs_invert_asr_img"
     fi
     echo '[*] Cleaned temporary files'
     exit
