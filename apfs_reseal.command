@@ -21,7 +21,7 @@ remote_cp() {
     fi
 
     expect -c 'set timeout -1' \
-           -c "spawn $scp -o \"ProxyCommand=inetcat 22\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \"$1\" \"root@:$2\"" \
+           -c "spawn $scp -o \"ProxyCommand=inetcat 22\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r \"$1\" \"root@:$2\"" \
            -c 'expect "assword:"' \
            -c 'send "alpine\n"' \
            -c 'expect eof'
@@ -137,7 +137,10 @@ if ! [ -e "$rootfs_dmg".trustcache ]; then
 fi
 
 pyimg4 im4p extract -i "$rootfs_dmg".mtree -o manifest_and_db.aar
-aa extract -i manifest_and_db.aar
+mkdir -p manifest_and_db
+cd manifest_and_db
+aa extract -i ../manifest_and_db.aar
+cd "$OLDPWD"
 
 if ! [ -e apfs_invert_asr_img ]; then
     asr -source "$rootfs_dmg" -target apfs_invert_asr_img --embed -erase -noprompt --chunkchecksum --puppetstrings
@@ -166,16 +169,15 @@ remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
 remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
-remote_cp digest.db /mnt9/digest.db
-remote_cp mtree.txt /mnt9/mtree.txt
+remote_cp manifest_and_db /mnt9/manifest_and_db
 remote_cp "$rootfs_dmg".root_hash /mnt9/root_hash
 remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
-remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/mtree.txt -r"
+remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/manifest_and_db/mtree.txt -r"
 remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/sbin/umount /mnt6"
-remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/digest.db -p -s com.apple.os.update-$active $rootfs"
+remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/manifest_and_db/digest.db -p -s com.apple.os.update-$active $rootfs"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/sbin/umount /mnt9"
 remote_cmd "/bin/sync"
