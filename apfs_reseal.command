@@ -147,7 +147,7 @@ esac
 rootfs=${container}s1
 
 if [ "$1" = --clean ]; then
-    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
+    rm -rf -- *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
     if remote_cmd "test -e $rootfs"; then
         remote_cmd "umount /mnt1" || true
         remote_cmd "mount_apfs $rootfs /mnt1"
