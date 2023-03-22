@@ -75,7 +75,7 @@ esac
 
 echo '[*] Waiting for device in recovery or DFU mode'
 while true; do
-    devices=$(system_profiler SPUSBDataType)
+    devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
     case $devices in
         *SSHRD_Script*)  # ramdisk
             device=$(remote_cmd "/usr/bin/mgask ProductType | tail -1")
