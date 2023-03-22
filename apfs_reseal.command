@@ -125,11 +125,6 @@ ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device"
 
 rootfs_dmg=$(curl -s "${ipsw_url%/*}"/BuildManifest.plist | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plutil -convert json - -o - | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
-TMPDIR=${TMPDIR:-/var/tmp}
-
-mkdir -p "$TMPDIR"/apfs_reseal
-cd "$TMPDIR"/apfs_reseal
-
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
     pzb "$ipsw_url" -g "$rootfs_dmg"
 fi
