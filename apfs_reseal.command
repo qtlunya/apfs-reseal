@@ -220,10 +220,10 @@ if [ "$found_preboot" != 1 ]; then
     exit 1
 fi
 active=$(remote_cmd "/bin/cat /mnt6/active")
+remote_cmd "/sbin/umount /mnt6"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/manifest_and_db/mtree.txt -r"
 remote_cmd "/sbin/umount /mnt1"
-remote_cmd "/sbin/umount /mnt6"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/manifest_and_db/digest.db -p -s com.apple.os.update-$active $rootfs"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/sbin/umount /mnt9"
