@@ -96,6 +96,7 @@ while true; do
             pushd sshrd-script
             git fetch
             git reset --hard origin/main
+            git submodule update --init --force
             if [ "$debug" = 1 ]; then
                 bash -x ./sshrd.sh clean
                 bash -x ./sshrd.sh "$ramdisk_ver"
