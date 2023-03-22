@@ -178,7 +178,9 @@ case $version in
         ;;
 esac
 rootfs=${container}s1
-remote_cmd "/sbin/apfs_deletefs $rootfs"
+if remote_cmd "test -e $rootfs"; then
+    remote_cmd "/sbin/apfs_deletefs $rootfs"
+fi
 remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
