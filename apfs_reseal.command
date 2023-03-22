@@ -44,6 +44,11 @@ for bin in awk expect ideviceenterrecovery irecovery jq palera1n pyimg4 python3 
     fi
 done
 
+if [ "$1" == --clean ]; then
+    clean=1
+    shift
+fi
+
 version=$1
 if [ -z "$version" ]; then
     printf 'Enter your EXACT iOS version (including beta/RC): ' >&2
@@ -146,7 +151,7 @@ case $version in
 esac
 rootfs=${container}s1
 
-if [ "$1" = --clean ]; then
+if [ "$clean" = 1 ]; then
     rm -rf -- *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
     if remote_cmd "test -e $rootfs"; then
         remote_cmd "/sbin/umount -f /mnt1" || true
