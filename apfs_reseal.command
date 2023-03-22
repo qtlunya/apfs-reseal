@@ -77,11 +77,13 @@ echo '[*] Waiting for device in recovery or DFU mode'
 while true; do
     if [ "$uname" = Darwin ]; then
         devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
+        serials=$(system_profiler SPUSBDataType | grep 'Serial Number')
     else
-        devices=$(lsusb | grep '05ac:'; cat /sys/bus/usb/devices/*/serial)
+        devices=$(lsusb | grep '05ac:')
+        serials=$(cat /sys/bus/usb/devices/*/serial)
     fi
 
-    case $devices in
+    case $serials in
         *SSHRD_Script*)  # ramdisk
             device=$(remote_cmd "/usr/bin/mgask ProductType | tail -1")
             boardconfig=$(remote_cmd "/usr/bin/mgask HWModelStr | tail -1" | tr '[:upper:]' '[:lower:]')
@@ -92,6 +94,9 @@ while true; do
 
             break
             ;;
+    esac
+
+    case $devices in
         *12a[8ab]*)  # normal
             ideviceenterrecovery "$(idevice_id -l)"
             while ! irecovery -q >/dev/null 2>/dev/null; do
@@ -133,6 +138,7 @@ while true; do
             break
             ;;
     esac
+
     sleep 1
 done
 
