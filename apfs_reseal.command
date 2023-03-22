@@ -35,11 +35,15 @@ remote_cp() {
            -c 'expect eof'
 }
 
+plist2json() {
+    python3 -c "import base64, json, plistlib, sys; print(json.dumps(plistlib.loads(sys.stdin.buffer.read()), default=lambda x: base64.b64encode(x).decode() if isinstance(x, bytes) else x))"
+}
+
 if [ "$uname" = Darwin ]; then
     trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
 fi
 
-for bin in awk expect ideviceenterrecovery irecovery jq palera1n plutil pyimg4 pzb scp ssh sshpass; do
+for bin in awk expect ideviceenterrecovery irecovery jq palera1n pyimg4 python3 pzb scp ssh sshpass; do
     if ! [ -x "$(command -v "$bin")" ]; then
         echo "[!] $bin not found. Please install it and try again." >&2
         exit 1
@@ -129,7 +133,7 @@ done
 
 ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device" --arg version "$version" -r '[.ios[] | select(.version == $version and (.deviceMap | index($device)))][0] | .devices[$device].ipsw')
 
-rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plutil -convert json - -o - | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
+rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plist2json | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
     pzb "$ipsw_url" -g "$rootfs_dmg"
