@@ -189,6 +189,18 @@ remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp manifest_and_db /mnt9/manifest_and_db
 remote_cp "Firmware/$rootfs_dmg.root_hash" /mnt9/root_hash
+for i in $(seq 3 7); do
+    fs=${container}s$i
+    if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p $fs")" = "Preboot" ]; then
+        remote_cmd "/sbin/mount_apfs $fs /mnt6"
+        found_preboot=1
+        break
+    fi
+done
+if [ "$found_preboot" != 1 ]; then
+    echo '[-] Unable to find Preboot volume'
+    exit 1
+fi
 remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
