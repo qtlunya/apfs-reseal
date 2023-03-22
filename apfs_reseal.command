@@ -89,8 +89,8 @@ while true; do
                 sleep 0.1
             done
 
-            device=$(irecovery -q | awk -F": " '$1 == "PRODUCT" { print $2 }')
-            boardconfig=$(irecovery -q | awk -F": " '$1 == "MODEL" { print $2 }')
+            device=$(irecovery -q | awk -F ': ' '$1 == "PRODUCT" { print $2 }')
+            boardconfig=$(irecovery -q | awk -F ': ' '$1 == "MODEL" { print $2 }')
 
             echo "Detected $device ($boardconfig)"
 
@@ -123,23 +123,23 @@ done
 
 ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device" --arg version "$version" -r '[.ios[] | select(.version == $version and (.deviceMap | index($device)))][0] | .devices[$device].ipsw')
 
-rootfs_dmg=$(curl -s "${ipsw_url%/*}"/BuildManifest.plist | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plutil -convert json - -o - | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
+rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plutil -convert json - -o - | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
     pzb "$ipsw_url" -g "$rootfs_dmg"
 fi
-if ! [ -e "$rootfs_dmg".mtree ] && ! [ -e manifest_and_db ]; then
-    pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".mtree
+if ! [ -e "$rootfs_dmg.mtree" ] && ! [ -e manifest_and_db ]; then
+    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.mtree"
 fi
-if ! [ -e "$rootfs_dmg".root_hash ]; then
-    pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".root_hash
+if ! [ -e "$rootfs_dmg.root_hash" ]; then
+    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.root_hash"
 fi
-if ! [ -e "$rootfs_dmg".trustcache ]; then
-    pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".trustcache
+if ! [ -e "$rootfs_dmg.trustcache" ]; then
+    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.trustcache"
 fi
 
 if ! [ -e manifest_and_db ]; then
-    pyimg4 im4p extract -i "$rootfs_dmg".mtree -o manifest_and_db.aar
+    pyimg4 im4p extract -i "$rootfs_dmg.mtree" -o manifest_and_db.aar
     mkdir -p manifest_and_db
     cd manifest_and_db
     aa extract -i ../manifest_and_db.aar
@@ -174,7 +174,7 @@ remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp manifest_and_db /mnt9/manifest_and_db
-remote_cp "$rootfs_dmg".root_hash /mnt9/root_hash
+remote_cp "$rootfs_dmg.root_hash" /mnt9/root_hash
 remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
