@@ -149,7 +149,7 @@ rootfs=${container}s1
 if [ "$1" = --clean ]; then
     rm -rf -- *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
     if remote_cmd "test -e $rootfs"; then
-        remote_cmd "/sbin/umount /mnt1" || true
+        remote_cmd "/sbin/umount -f /mnt1" || true
         remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
         remote_cmd "/bin/rm -f /mnt1/apfs_invert_asr_img"
     fi
@@ -189,11 +189,11 @@ while ! remote_cmd "echo connected" >/dev/null 2>&1; do
     sleep 0.1
 done
 echo '[*] Connected'
-remote_cmd "/sbin/umount /mnt*" || true
+remote_cmd "/sbin/umount -f /mnt*" || true
 if remote_cmd "test -e $rootfs"; then
     remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
     if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
-        remote_cmd "/sbin/umount /mnt1"
+        remote_cmd "/sbin/umount -f /mnt1"
         remote_cmd "/sbin/apfs_deletefs $rootfs"
         remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
         remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
@@ -205,7 +205,7 @@ fi
 if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
     remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
 fi
-remote_cmd "/sbin/umount /mnt1"
+remote_cmd "/sbin/umount -f /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp manifest_and_db /mnt9/manifest_and_db
@@ -223,13 +223,13 @@ if [ "$found_preboot" != 1 ]; then
     exit 1
 fi
 active=$(remote_cmd "/bin/cat /mnt6/active")
-remote_cmd "/sbin/umount /mnt6"
+remote_cmd "/sbin/umount -f /mnt6"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/manifest_and_db/mtree.txt -r"
-remote_cmd "/sbin/umount /mnt1"
+remote_cmd "/sbin/umount -f /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtree_remap.xml -I /mnt9/root_hash -u /mnt9/manifest_and_db/digest.db -p -s com.apple.os.update-$active $rootfs"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
-remote_cmd "/sbin/umount /mnt9"
+remote_cmd "/sbin/umount -f /mnt9"
 remote_cmd "/bin/sync"
 remote_cmd "/usr/sbin/nvram auto-boot=true"
 remote_cmd "/sbin/reboot"
