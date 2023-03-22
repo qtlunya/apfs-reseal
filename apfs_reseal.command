@@ -157,6 +157,7 @@ if [ "$clean" = 1 ]; then
         remote_cmd "/sbin/umount -f /mnt1" || true
         remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
         remote_cmd "/bin/rm -f /mnt1/apfs_invert_asr_img"
+        remote_cmd "/sbin/umount -f /mnt1"
     fi
     echo '[*] Cleaned temporary files'
     exit
