@@ -75,7 +75,12 @@ esac
 
 echo '[*] Waiting for device in recovery or DFU mode'
 while true; do
-    devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
+    if [ "$os" = Darwin ]; then
+        devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
+    else
+        devices=$(lsusb | grep '05ac:'; cat /sys/bus/usb/devices/*/serial)
+    fi
+
     case $devices in
         *SSHRD_Script*)  # ramdisk
             device=$(remote_cmd "/usr/bin/mgask ProductType | tail -1")
@@ -87,13 +92,13 @@ while true; do
 
             break
             ;;
-        *'Product ID: 0x12a'[8ab]*)  # normal
+        *12a[8ab]*)  # normal
             ideviceenterrecovery "$(idevice_id -l)"
             while ! irecovery -q >/dev/null 2>/dev/null; do
                 sleep 0.1
             done
             ;;
-        *'Product ID: 0x1281'*|*'Product ID: 0x1227'*)  # recovery/DFU
+        *1281*|*1227*)  # recovery/DFU
             palera1n --dfuhelper
             while ! irecovery -q >/dev/null 2>/dev/null; do
                 sleep 0.1
