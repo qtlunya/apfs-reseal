@@ -62,7 +62,7 @@ while true; do
     case $devices in
         *SSHRD_Script*)  # ramdisk
             device=$(remote_cmd "/usr/bin/mgask ProductType | tail -1")
-            boardconfig=$(remote_cmd "/usr/bin/mgask HWModelStr | tail -1")
+            boardconfig=$(remote_cmd "/usr/bin/mgask HWModelStr | tail -1" | tr A-Z a-z)
 
             echo "Detected $device ($boardconfig)"
 
