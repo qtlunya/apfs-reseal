@@ -144,9 +144,6 @@ fi
 if ! [ -e "$rootfs_dmg.root_hash" ]; then
     pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.root_hash"
 fi
-if ! [ -e "$rootfs_dmg.trustcache" ]; then
-    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.trustcache"
-fi
 
 if ! [ -e manifest_and_db ]; then
     pyimg4 im4p extract -i "$rootfs_dmg.mtree" -o manifest_and_db.aar
