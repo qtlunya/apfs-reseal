@@ -207,7 +207,6 @@ if [ "$found_preboot" != 1 ]; then
     echo '[-] Unable to find Preboot volume'
     exit 1
 fi
-remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/usr/sbin/mtree -p /mnt1 -m /mnt9/mtree_remap.xml -f /mnt9/manifest_and_db/mtree.txt -r"
