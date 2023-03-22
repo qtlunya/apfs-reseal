@@ -126,7 +126,7 @@ pushd "$TMPDIR"/apfs_reseal
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
     pzb "$ipsw_url" -g "$rootfs_dmg"
 fi
-if ! [ -e "$rootfs_dmg".mtree ]; then
+if ! [ -e "$rootfs_dmg".mtree ] && ! [ -e manifest_and_db ]; then
     pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".mtree
 fi
 if ! [ -e "$rootfs_dmg".root_hash ]; then
@@ -136,11 +136,13 @@ if ! [ -e "$rootfs_dmg".trustcache ]; then
     pzb "$ipsw_url" -g Firmware/"$rootfs_dmg".trustcache
 fi
 
-pyimg4 im4p extract -i "$rootfs_dmg".mtree -o manifest_and_db.aar
-mkdir -p manifest_and_db
-cd manifest_and_db
-aa extract -i ../manifest_and_db.aar
-cd "$OLDPWD"
+if ! [ -e manifest_and_db ]; then
+    pyimg4 im4p extract -i "$rootfs_dmg".mtree -o manifest_and_db.aar
+    mkdir -p manifest_and_db
+    cd manifest_and_db
+    aa extract -i ../manifest_and_db.aar
+    cd "$OLDPWD"
+fi
 
 if ! [ -e apfs_invert_asr_img ]; then
     asr -source "$rootfs_dmg" -target apfs_invert_asr_img --embed -erase -noprompt --chunkchecksum --puppetstrings
