@@ -60,8 +60,8 @@ while true; do
     devices=$(system_profiler SPUSBDataType)
     case $devices in
         *SSHRD_Script*)  # ramdisk
-            device=$(remote_cmd "/usr/sbin/mgask ProductType")
-            boardconfig=$(remote_cmd "/usr/sbin/mgask HWModelStr")
+            device=$(remote_cmd "/usr/sbin/mgask ProductType | tail -1")
+            boardconfig=$(remote_cmd "/usr/sbin/mgask HWModelStr | tail -1")
 
             echo "Detected $device ($boardconfig)"
 
