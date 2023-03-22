@@ -6,12 +6,6 @@ if [ "$1" = --debug ]; then
     shift
 fi
 
-if [ "$1" = --clean ]; then
-    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
-    echo '[*] Cleaned temporary files'
-    exit
-fi
-
 uname=$(uname)
 
 remote_cmd() {
@@ -142,6 +136,27 @@ while true; do
     sleep 1
 done
 
+case $version in
+    15.*)
+        container=/dev/disk0s1
+        ;;
+    16.*)
+        container=/dev/disk1
+        ;;
+esac
+rootfs=${container}s1
+
+if [ "$1" = --clean ]; then
+    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db* sshrd-script
+    if remote_cmd "test -e $rootfs"; then
+        remote_cmd "umount /mnt1" || true
+        remote_cmd "mount_apfs $rootfs /mnt1"
+        remote_cmd "rm -f /mnt1/apfs_invert_asr_img"
+    fi
+    echo '[*] Cleaned temporary files'
+    exit
+fi
+
 ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device" --arg version "$version" -r '[.ios[] | select(.version == $version and (.deviceMap | index($device)))][0] | .devices[$device].ipsw')
 
 rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plist2json | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
@@ -175,21 +190,18 @@ while ! remote_cmd "echo connected" >/dev/null 2>&1; do
 done
 echo '[*] Connected'
 remote_cmd "/sbin/umount /mnt*" || true
-case $version in
-    15.*)
-        container=/dev/disk0s1
-        ;;
-    16.*)
-        container=/dev/disk1
-        ;;
-esac
-rootfs=${container}s1
 if remote_cmd "test -e $rootfs"; then
-    remote_cmd "/sbin/apfs_deletefs $rootfs"
+    if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
+        remote_cmd "/sbin/apfs_deletefs $rootfs"
+        remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
+    fi
+else
+    remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
 fi
-remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
-remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
+if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
+    remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
+fi
 remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
