@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
 if [ "$1" = --debug ]; then
+    set -x
     debug=1
     shift
 fi
