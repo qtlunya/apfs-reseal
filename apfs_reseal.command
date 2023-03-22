@@ -75,7 +75,7 @@ esac
 
 echo '[*] Waiting for device in recovery or DFU mode'
 while true; do
-    if [ "$os" = Darwin ]; then
+    if [ "$uname" = Darwin ]; then
         devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
     else
         devices=$(lsusb | grep '05ac:'; cat /sys/bus/usb/devices/*/serial)
