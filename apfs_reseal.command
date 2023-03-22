@@ -7,7 +7,7 @@ if [ "$1" = --debug ]; then
 fi
 
 if [ "$1" = --clean ]; then
-    rm -rf *.dmg* apfs_invert_asr_img manifest_and_db sshrd-script
+    rm -rf *.dmg apfs_invert_asr_img Firmware manifest_and_db sshrd-script
     echo '[*] Cleaned temporary files'
     exit
 fi
@@ -43,7 +43,7 @@ if [ "$uname" = Darwin ]; then
     trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
 fi
 
-for bin in awk expect ideviceenterrecovery irecovery jq palera1n pyimg4 python3 pzb scp ssh sshpass; do
+for bin in awk expect ideviceenterrecovery irecovery jq palera1n pyimg4 python3 remotezip scp ssh sshpass; do
     if ! [ -x "$(command -v "$bin")" ]; then
         echo "[!] $bin not found. Please install it and try again." >&2
         exit 1
@@ -136,17 +136,17 @@ ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device"
 rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plist2json | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
-    pzb "$ipsw_url" -g "$rootfs_dmg"
+    remotezip "$ipsw_url" "$rootfs_dmg"
 fi
-if ! [ -e "$rootfs_dmg.mtree" ] && ! [ -e manifest_and_db ]; then
-    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.mtree"
+if ! [ -e "Firmware/$rootfs_dmg.mtree" ] && ! [ -e manifest_and_db ]; then
+    remotezip "$ipsw_url" "Firmware/$rootfs_dmg.mtree"
 fi
-if ! [ -e "$rootfs_dmg.root_hash" ]; then
-    pzb "$ipsw_url" -g "Firmware/$rootfs_dmg.root_hash"
+if ! [ -e "Firmware/$rootfs_dmg.root_hash" ]; then
+    remotezip "$ipsw_url" "Firmware/$rootfs_dmg.root_hash"
 fi
 
 if ! [ -e manifest_and_db ]; then
-    pyimg4 im4p extract -i "$rootfs_dmg.mtree" -o manifest_and_db.aar
+    pyimg4 im4p extract -i "Firmware/$rootfs_dmg.mtree" -o manifest_and_db.aar
     mkdir -p manifest_and_db
     cd manifest_and_db
     aa extract -i ../manifest_and_db.aar
@@ -181,7 +181,7 @@ remote_cmd "/sbin/umount /mnt1"
 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d $container -s 1 -n apfs_invert_asr_img"
 remote_cmd "/sbin/mount_tmpfs /mnt9"
 remote_cp manifest_and_db /mnt9/manifest_and_db
-remote_cp "$rootfs_dmg.root_hash" /mnt9/root_hash
+remote_cp "Firmware/$rootfs_dmg.root_hash" /mnt9/root_hash
 remote_cmd "/sbin/mount_apfs ${container}s6 /mnt6"
 active=$(remote_cmd "/bin/cat /mnt6/active")
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
