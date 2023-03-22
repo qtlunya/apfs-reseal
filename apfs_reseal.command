@@ -96,9 +96,11 @@ while true; do
             git fetch
             git reset --hard origin/main
             if [ "$debug" = 1 ]; then
+                bash -x ./sshrd.sh clean
                 bash -x ./sshrd.sh "$ramdisk_ver"
                 bash -x ./sshrd.sh boot
             else
+                ./sshrd.sh clean
                 ./sshrd.sh "$ramdisk_ver"
                 ./sshrd.sh boot
             fi
