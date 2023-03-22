@@ -151,7 +151,7 @@ fi
 rm -f "$rootfs_dmg"
 
 echo '[*] Waiting for device to connect'
-while ! remote_cmd 'echo connected' >/dev/null 2>&1; do
+while ! remote_cmd "echo connected" >/dev/null 2>&1; do
     sleep 0.1
 done
 echo '[*] Connected'
