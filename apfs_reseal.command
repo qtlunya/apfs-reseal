@@ -12,6 +12,8 @@ if [ "$1" = --clean ]; then
     exit
 fi
 
+uname=$(uname)
+
 remote_cmd() {
     echo "[*] Running command: $1" >&2
     sshpass -p alpine ssh -q -o ProxyCommand='inetcat 22' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@ "$1"
@@ -33,7 +35,9 @@ remote_cp() {
            -c 'expect eof'
 }
 
-trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
+if [ "$uname" = Darwin ]; then
+    trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
+fi
 
 for bin in awk expect ideviceenterrecovery irecovery jq palera1n plutil pyimg4 pzb scp ssh sshpass; do
     if ! [ -x "$(command -v "$bin")" ]; then
@@ -48,7 +52,9 @@ if [ -z "$version" ]; then
     read -r version
 fi
 
-killall -STOP AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater
+if [ "$uname" = Darwin ]; then
+    killall -STOP AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater
+fi
 
 case $version in
     15.*)
