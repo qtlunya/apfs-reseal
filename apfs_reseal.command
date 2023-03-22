@@ -73,7 +73,7 @@ case $version in
         ;;
 esac
 
-echo '[*] Waiting for device in recovery or DFU mode'
+echo '[*] Waiting for device'
 while true; do
     if [ "$uname" = Darwin ]; then
         devices=$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac')
