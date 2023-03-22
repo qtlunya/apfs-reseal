@@ -191,14 +191,17 @@ done
 echo '[*] Connected'
 remote_cmd "/sbin/umount /mnt*" || true
 if remote_cmd "test -e $rootfs"; then
+    remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
     if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
+        remote_cmd "/sbin/umount /mnt1"
         remote_cmd "/sbin/apfs_deletefs $rootfs"
         remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
+        remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
     fi
 else
     remote_cmd "/sbin/newfs_apfs -o role=s -A -v System $container"
+    remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 fi
-remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 if ! remote_cmd "test -e /mnt1/apfs_invert_asr_img"; then
     remote_cp apfs_invert_asr_img /mnt1/apfs_invert_asr_img
 fi
