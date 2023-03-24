@@ -17,9 +17,13 @@ sudo xcodebuild -license accept
 
 brew tap esolitos/ipa
 
-brew install esolitos/ipa/sshpass libimobiledevice libirecovery jq python3
+brew install esolitos/ipa/sshpass libimobiledevice jq python3
 
 sudo python3 -m pip install pyimg4 remotezip
+
+sudo curl -Lo /usr/local/bin/irecovery https://github.com/palera1n/palera1n/blob/legacy/binaries/Darwin/irecovery
+
+sudo chmod +x /usr/local/bin/irecovery
 
 sudo curl -Lo /usr/local/bin/palera1n https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.5/palera1n-macos-universal
 
@@ -40,9 +44,13 @@ The following commands assume a Debian/Ubuntu-based Linux distro. If running fro
 ```
 sudo apt update
 
-sudo apt install -y expect gawk git irecovery jq libimobiledevice-utils openssh-client python3 python3-pip sshpass
+sudo apt install -y expect gawk git jq libimobiledevice-utils openssh-client python3 python3-pip sshpass
 
 sudo python3 -m pip install pyimg4 remotezip
+
+sudo wget https://github.com/palera1n/palera1n/blob/legacy/binaries/Linux/irecovery -O /usr/local/bin/irecovery
+
+sudo chmod +x /usr/local/bin/irecovery
 
 sudo wget https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.5/palera1n-linux-x86_64 -O /usr/local/bin/palera1n
 
