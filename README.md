@@ -21,7 +21,7 @@ brew install esolitos/ipa/sshpass libimobiledevice jq python3
 
 sudo python3 -m pip install pyimg4 remotezip
 
-sudo curl -Lo /usr/local/bin/irecovery https://github.com/palera1n/palera1n/blob/legacy/binaries/Darwin/irecovery
+sudo curl -Lo /usr/local/bin/irecovery https://github.com/palera1n/palera1n/raw/legacy/binaries/Darwin/irecovery
 
 sudo chmod +x /usr/local/bin/irecovery
 
@@ -48,7 +48,7 @@ sudo apt install -y expect gawk git jq libimobiledevice-utils openssh-client pyt
 
 sudo python3 -m pip install pyimg4 remotezip
 
-sudo wget https://github.com/palera1n/palera1n/blob/legacy/binaries/Linux/irecovery -O /usr/local/bin/irecovery
+sudo wget https://github.com/palera1n/palera1n/raw/legacy/binaries/Linux/irecovery -O /usr/local/bin/irecovery
 
 sudo chmod +x /usr/local/bin/irecovery
 
