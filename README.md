@@ -1,5 +1,6 @@
 # apfs-reseal
-Script to restore and reseal rootfs on checkm8 devices
+
+This is a script that can be used to restore and reseal the rootfs on checkm8 devices on iOS 15 and above if you recovery loop due to the SSV seal breaking.
 
 ## Notes
 * This script currently requires macOS to work fully automatically. If you are using Linux, you'll have to get me or someone else to prepare a zip for you for now. Full Linux support is being worked on.
