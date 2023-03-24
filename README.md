@@ -35,6 +35,8 @@ cd apfs-reseal
 ### Linux
 palen1x will **not** work for this. You need full Linux with internet access. Installed Linux is preferred, live USB may be problematic unless you have 8 GB+ RAM or you clone the script to your Windows disk.
 
+The following commands assume a Debian/Ubuntu-based Linux distro. If running from a live USB, run `sudo add-apt-repository universe` first. For other Linux distros, you may have to replace the `apt` commands with something else.
+
 ```
 sudo apt update
 
