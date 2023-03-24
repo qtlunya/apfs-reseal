@@ -164,6 +164,10 @@ if [ "$clean" = 1 ]; then
 fi
 
 ipsw_url=$(curl -s https://api.appledb.dev/main.json | jq --arg device "$device" --arg version "$version" -r '[.ios[] | select(.version == $version and (.deviceMap | index($device)))][0] | .devices[$device].ipsw')
+if [ -z "$ipsw_url" ] || [ "$ipsw_url" = null ]; then
+    echo "[-] Failed to get IPSW URL for $device on $version" >&2
+    exit 1
+fi
 
 rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plist2json | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
