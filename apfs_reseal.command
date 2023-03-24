@@ -102,8 +102,10 @@ while true; do
                 sleep 0.1
             done
             ;;
-        *1281*|*1227*)  # recovery/DFU
+        *1281*)  # recovery
             palera1n --dfuhelper
+            ;;
+        *1227*)  # DFU
             while ! irecovery -q >/dev/null 2>/dev/null; do
                 sleep 0.1
             done
