@@ -187,7 +187,7 @@ while true; do
 done
 
 case $version in
-    15.*)
+    1[45].*)
         container=/dev/disk0s1
         ;;
     16.*)
@@ -292,7 +292,7 @@ fi
 remote_cmd "/usr/sbin/nvram auto-boot=true"
 remote_cmd "/sbin/reboot"
 case $version in
-    15.*)
+    1[45].*)
         echo '[*] Done! Your device should now boot up in normal mode.'
         ;;
     16.*)
