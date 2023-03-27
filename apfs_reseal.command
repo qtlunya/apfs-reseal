@@ -88,6 +88,21 @@ if [ "$uname" = Darwin ]; then
 fi
 
 case $version in
+    14.[2-8]*|14.[2-8].*)
+        echo '[!] WARNING: You appear to be using iOS 14.'
+        echo '[!] This script is not really needed on that version and it is untested.' >&2
+        echo '[!] Please type "Yes, I am sure" (without quotes) if you want to continue.' >&2
+        echo
+        printf '> ' >&2
+        read -r
+        echo
+        if [ "$REPLY" != 'Yes, I am sure' ]; then
+            echo 'Aborting.'
+            exit 1
+        fi
+
+        ramdisk_ver=14.8
+        ;;
     15.*)
         ramdisk_ver=15.6
         ;;
@@ -95,7 +110,7 @@ case $version in
         ramdisk_ver=16.0.3
         ;;
     *)
-        echo '[-] This script only supports iOS 15.0-16.3.1.' >&2
+        echo '[-] This script only supports iOS 14.2-16.3.1.' >&2
         exit 1
         ;;
 esac
