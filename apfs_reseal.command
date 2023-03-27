@@ -1,10 +1,37 @@
 #!/bin/sh -e
 
-if [ "$1" = --debug ]; then
-    set -x
-    debug=1
-    shift
-fi
+while true; do
+    case $1 in
+        --debug)
+            set -x
+            debug=1
+            shift
+            ;;
+        --erase)
+            echo '[!] WARNING: You have requested to erase the device.' >&2
+            echo '[!] THIS WILL IRRECOVERABLY DELETE ALL YOUR DATA.'
+            echo '[!] Do not do this unless you know what you are doing.' >&2
+            echo '[!] Make sure you have a backup if you have any important data on the device.' >&2
+            echo '[!] Please type "Yes, I am sure" (without quotes) if you want to continue.' >&2
+            echo
+            printf '> ' >&2
+            read -r
+            echo
+            if [ "$REPLY" != 'Yes, I am sure' ]; then
+                echo 'Aborting.'
+                exit 1
+            fi
+            erase=1
+            shift
+            ;;
+        --*)
+            echo "[-] Unrecognized option: $1" >&2
+            exit 1
+            ;;
+        *)
+            break
+    esac
+done
 
 uname=$(uname)
 
@@ -243,6 +270,9 @@ remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_sealvolume -P -R /mnt9/mtre
 remote_cmd "/sbin/mount_apfs $rootfs /mnt1"
 remote_cmd "/sbin/umount -f /mnt9"
 remote_cmd "/bin/sync"
+if [ "$erase" = 1 ]; then
+    remote_cmd "/usr/sbin/nvram oblit-inprogress=5"
+fi
 remote_cmd "/usr/sbin/nvram auto-boot=true"
 remote_cmd "/sbin/reboot"
 case $version in
