@@ -80,6 +80,7 @@ version=$1
 if [ -z "$version" ]; then
     printf 'Enter your EXACT iOS version (including beta/RC): ' >&2
     read -r version
+    echo
 fi
 
 if [ "$uname" = Darwin ]; then
