@@ -5,7 +5,7 @@ This is a script that can be used to restore and reseal the rootfs on checkm8 de
 ## Notes
 * This script currently requires macOS to work fully automatically. If you are using Linux, someone will have to prepare a zip for you. Full Linux support is being worked on.
 
-## Prerequisites
+## Usage
 
 ### macOS
 ```
