@@ -2,6 +2,10 @@
 
 while true; do
     case $1 in
+        --clean)
+            clean=1
+            shift
+            ;;
         --debug)
             set -x
             debug=1
@@ -70,11 +74,6 @@ for bin in awk expect ideviceenterrecovery irecovery jq palera1n pyimg4 python3 
         exit 1
     fi
 done
-
-if [ "$1" = --clean ]; then
-    clean=1
-    shift
-fi
 
 version=$1
 if [ -z "$version" ]; then
