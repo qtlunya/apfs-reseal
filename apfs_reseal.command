@@ -229,7 +229,14 @@ if ! [ -e manifest_and_db ]; then
     pyimg4 im4p extract -i "Firmware/$rootfs_dmg.mtree" -o manifest_and_db.aar
     mkdir -p manifest_and_db
     cd manifest_and_db
-    aa extract -i ../manifest_and_db.aar
+    if [ -x "$(command -v aa)" ]; then
+        aa extract -i ../manifest_and_db.aar
+    elif [ -x "$(command -v yaa)" ]; then
+        yaa extract -i ../manifest_and_db.aar
+    else
+        echo '[-] aa or yaa not found, cannot extract archive.'
+        exit 1
+    fi
     cd "$OLDPWD"
 fi
 
