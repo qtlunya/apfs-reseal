@@ -225,7 +225,7 @@ if ! [ -e "Firmware/$rootfs_dmg.root_hash" ]; then
     remotezip "$ipsw_url" "Firmware/$rootfs_dmg.root_hash"
 fi
 
-if ! [ -e manifest_and_db ]; then
+if [ ! -e manifest_and_db/digest.db ] || [ ! -e manifest_and_db/mtree.txt ]; then
     pyimg4 im4p extract -i "Firmware/$rootfs_dmg.mtree" -o manifest_and_db.aar
     mkdir -p manifest_and_db
     cd manifest_and_db
