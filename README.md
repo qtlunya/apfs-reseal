@@ -25,7 +25,7 @@ sudo curl -Lo /usr/local/bin/irecovery https://github.com/palera1n/palera1n/raw/
 
 sudo chmod +x /usr/local/bin/irecovery
 
-sudo curl -Lo /usr/local/bin/palera1n https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.5/palera1n-macos-universal
+sudo curl -Lo /usr/local/bin/palera1n https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.6.2/palera1n-macos-universal
 
 sudo chmod +x /usr/local/bin/palera1n
 
@@ -52,7 +52,7 @@ sudo wget https://github.com/palera1n/palera1n/raw/legacy/binaries/Linux/irecove
 
 sudo chmod +x /usr/local/bin/irecovery
 
-sudo wget https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.5/palera1n-linux-x86_64 -O /usr/local/bin/palera1n
+sudo wget https://github.com/palera1n/palera1n/releases/download/v2.0.0-beta.6.2/palera1n-linux-x86_64 -O /usr/local/bin/palera1n
 
 sudo chmod +x /usr/local/bin/palera1n
 
