@@ -64,6 +64,21 @@ plist2json() {
     python3 -c "import base64, json, plistlib, sys; print(json.dumps(plistlib.loads(sys.stdin.buffer.read()), default=lambda x: base64.b64encode(x).decode() if isinstance(x, bytes) else x))"
 }
 
+do_remotezip() {
+    delay=5
+    for i in $(seq 1 5); do
+        if remotezip "$@"; then
+            return 0
+        else
+            echo "[!] remotezip failed, retrying in $delay seconds"
+            sleep "$delay"
+            delay=$(( delay * 2 ))
+        fi
+    done
+    # If we got here, it failed
+    return 1
+}
+
 if [ "$uname" = Darwin ]; then
     trap 'killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent iTunesHelper MobileDeviceUpdater' EXIT
 fi
@@ -216,13 +231,13 @@ fi
 rootfs_dmg=$(curl -s "${ipsw_url%/*}/BuildManifest.plist" | sed 's,<data>,<string>,g; s,</data>,</string>,g' | plist2json | jq -r --arg boardconfig "$boardconfig" '[.BuildIdentities[] | select(.Info.DeviceClass == $boardconfig)][0].Manifest.OS.Info.Path')
 
 if ! [ -e "$rootfs_dmg" ] && ! [ -e apfs_invert_asr_img ]; then
-    remotezip "$ipsw_url" "$rootfs_dmg"
+    do_remotezip "$ipsw_url" "$rootfs_dmg"
 fi
 if ! [ -e "Firmware/$rootfs_dmg.mtree" ] && ! [ -e manifest_and_db ]; then
-    remotezip "$ipsw_url" "Firmware/$rootfs_dmg.mtree"
+    do_remotezip "$ipsw_url" "Firmware/$rootfs_dmg.mtree"
 fi
 if ! [ -e "Firmware/$rootfs_dmg.root_hash" ]; then
-    remotezip "$ipsw_url" "Firmware/$rootfs_dmg.root_hash"
+    do_remotezip "$ipsw_url" "Firmware/$rootfs_dmg.root_hash"
 fi
 
 if [ ! -e manifest_and_db/digest.db ] || [ ! -e manifest_and_db/mtree.txt ]; then
